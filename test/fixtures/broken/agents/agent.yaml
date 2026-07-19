@@ -1,0 +1,7 @@
+name: agent
+description: Invalid agent — model.name is not a valid provider/model spec.
+model:
+  name: not-a-valid-spec
+tools: []
+system_instructions:
+  content: This fixture must fail validation.

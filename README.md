@@ -117,13 +117,24 @@ jobs:
 | `node-version`  | `24`                    | Node.js version used to run the checker.                                    |
 | `upload-report` | `true`                  | Upload the JSON diagnostics report as a build artifact (`recipe-check-report`), even on failure. |
 
-## Report artifact
+## Output
 
-When `upload-report` is `true`, the action writes the machine-readable report
-(`recipes check … --json`) to `recipe-check-report.json` and uploads it as the
-`recipe-check-report` artifact — available on both passing and failing runs for
-inspection or downstream tooling. When validating several recipes in a matrix,
-the artifact name is suffixed with the recipe path so runs don't collide.
+Every diagnostic is surfaced four ways:
+
+- **Inline annotations** — each error/warning is emitted as a GitHub annotation,
+  so it shows up on the offending file in the PR "Files changed" tab and the
+  checks summary (with line/column when the diagnostic carries one).
+- **Job summary** — a Markdown table on the run's Summary page listing every
+  diagnostic (severity, code, location, message) plus the recipe's resource
+  counts and a pass/fail header.
+- **Step log** — a readable per-diagnostic listing in the action's log.
+- **JSON artifact** — when `upload-report` is `true`, the full machine-readable
+  report (`recipes check … --json`) is written to `recipe-check-report.json` and
+  uploaded as the `recipe-check-report` artifact, on both passing and failing
+  runs. When validating several recipes in a matrix, the artifact name is
+  suffixed with the recipe path so runs don't collide.
+
+The job fails (non-zero exit) whenever the recipe has any validation error.
 
 ## Versioning
 
