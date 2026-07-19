@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.1](https://github.com/introspection-org/pi-recipes-action/compare/v0.1.0...v0.1.1) (2026-07-19)
+
+
+### Features
+
+* annotate diagnostics inline and write a job-summary table ([#3](https://github.com/introspection-org/pi-recipes-action/issues/3)) ([729861e](https://github.com/introspection-org/pi-recipes-action/commit/729861e557f8d7c3b013f9162d6ee6cc44a318b0))
+
 ## 0.1.0 (2026-07-19)
 
 
