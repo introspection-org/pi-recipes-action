@@ -37,7 +37,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: introspection-org/pi-recipes-action@v1
+      - uses: introspection-org/pi-recipes-action@v0
 ```
 
 That's the whole workflow. The action runs `recipes check . --profile ci` and
@@ -58,7 +58,7 @@ rule set.
 
 ```yaml
 - uses: actions/checkout@v4
-- uses: introspection-org/pi-recipes-action@v1
+- uses: introspection-org/pi-recipes-action@v0
 ```
 
 ### Pin the checker for reproducible CI
@@ -67,7 +67,7 @@ By default the action floats to the newest published checker (`version: latest`)
 Pin it if you'd rather opt out of automatic rule updates:
 
 ```yaml
-- uses: introspection-org/pi-recipes-action@v1
+- uses: introspection-org/pi-recipes-action@v0
   with:
     version: 0.10.4
 ```
@@ -78,7 +78,7 @@ Run the strictest profile (e.g. on release tags), which escalates advisory
 checks such as a missing lockfile to errors:
 
 ```yaml
-- uses: introspection-org/pi-recipes-action@v1
+- uses: introspection-org/pi-recipes-action@v0
   with:
     profile: publish
 ```
@@ -86,7 +86,7 @@ checks such as a missing lockfile to errors:
 ### A recipe in a subdirectory / monorepo
 
 ```yaml
-- uses: introspection-org/pi-recipes-action@v1
+- uses: introspection-org/pi-recipes-action@v0
   with:
     recipe-dir: recipes/my-recipe
 ```
@@ -102,7 +102,7 @@ jobs:
         recipe: [recipes/a, recipes/b, recipes/c]
     steps:
       - uses: actions/checkout@v4
-      - uses: introspection-org/pi-recipes-action@v1
+      - uses: introspection-org/pi-recipes-action@v0
         with:
           recipe-dir: ${{ matrix.recipe }}
 ```
@@ -127,18 +127,22 @@ the artifact name is suffixed with the recipe path so runs don't collide.
 
 ## Versioning
 
-Pin to the major tag for automatic non-breaking updates:
+> [!NOTE]
+> This is a pre-1.0 (`v0.x`) line. Inputs may change between minor versions;
+> pin an exact tag if you need stability.
+
+Pin to the moving major tag to track the latest pre-1.0 build:
 
 ```yaml
-uses: introspection-org/pi-recipes-action@v1        # recommended: latest v1.x
-uses: introspection-org/pi-recipes-action@v1.2.3    # exact release
+uses: introspection-org/pi-recipes-action@v0        # recommended: latest v0.x
+uses: introspection-org/pi-recipes-action@v0.1.0    # exact release
 uses: introspection-org/pi-recipes-action@<sha>     # fully locked
 ```
 
-The `v1` tag is a moving pointer maintained at the newest `v1.x` release.
-Note that pinning the **action** (`@v1`) is independent of pinning the
-**checker** (`version:` input): `@v1` keeps the action stable while `version`
-controls how fresh the validation rules are.
+The `v0` tag is a moving pointer maintained at the newest `v0.x` release.
+Pinning the **action** (`@v0`) is independent of pinning the **checker**
+(`version:` input): `@v0` tracks the action while `version` controls how fresh
+the validation rules are.
 
 ## Run the same check locally
 
