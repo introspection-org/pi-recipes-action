@@ -32,11 +32,28 @@ runs:
       with:
         node-version: ${{ inputs.node-version }}
 
-    - name: Validate recipe
+    - name: Run recipe check
       shell: bash
+      env:
+        PI_RECIPES_VERSION: ${{ inputs.version }}
+        RECIPE_DIR: ${{ inputs.recipe-dir }}
+        PROFILE: ${{ inputs.profile }}
       run: |
-        echo "Using @introspection-ai/pi-recipes@$(npm view @introspection-ai/pi-recipes@${{ inputs.version }} version)"
-        npx -y -p @introspection-ai/pi-recipes@${{ inputs.version }} recipes check "${{ inputs.recipe-dir }}" --profile "${{ inputs.profile }}"
+        resolved="$(npm view "@introspection-ai/pi-recipes@${PI_RECIPES_VERSION}" version 2>/dev/null || echo "${PI_RECIPES_VERSION}")"
+        echo "Using @introspection-ai/pi-recipes@${resolved}"
+        # Produce the machine-readable report; report.js is the gate, so never
+        # fail this step here (the redirect always writes the file, even on a
+        # non-zero exit).
+        npx -y -p "@introspection-ai/pi-recipes@${PI_RECIPES_VERSION}" recipes check "${RECIPE_DIR}" --profile "${PROFILE}" --json > "${RUNNER_TEMP}/recipe-check-report.json" || true
+        cp "${RUNNER_TEMP}/recipe-check-report.json" recipe-check-report.json || true
+
+    - name: Annotate and summarize
+      shell: bash
+      env:
+        RECIPE_DIR: ${{ inputs.recipe-dir }}
+      # Emits inline annotations + a job-summary table and exits non-zero when
+      # the recipe is invalid, which fails the composite action.
+      run: node "${GITHUB_ACTION_PATH}/report.js" "${RUNNER_TEMP}/recipe-check-report.json"
 
     - name: Compute report artifact name
       if: ${{ always() && inputs.upload-report == 'true' }}
@@ -45,11 +62,6 @@ runs:
       run: |
         slug=$(printf '%s' "${{ inputs.recipe-dir }}" | tr '/.' '--' | sed 's/^-*//; s/-*$//')
         echo "name=recipe-check-report${slug:+-$slug}" >> "$GITHUB_OUTPUT"
-
-    - name: Write structured report
-      if: ${{ always() && inputs.upload-report == 'true' }}
-      shell: bash
-      run: npx -y -p @introspection-ai/pi-recipes@${{ inputs.version }} recipes check "${{ inputs.recipe-dir }}" --profile "${{ inputs.profile }}" --json > recipe-check-report.json || true
 
     - name: Upload recipe check report
       if: ${{ always() && inputs.upload-report == 'true' }}

@@ -8,12 +8,30 @@ permissions:
   contents: read
 
 jobs:
-  self-test:
+  self-test-pass:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
 
-      - name: Run this action against the fixture recipe
+      - name: Action passes on a valid recipe
         uses: ./
         with:
           recipe-dir: test/fixtures/minimal
+
+  self-test-fail:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Action runs against an invalid recipe
+        id: check
+        continue-on-error: true
+        uses: ./
+        with:
+          recipe-dir: test/fixtures/broken
+
+      - name: Assert the action failed the job
+        if: ${{ steps.check.outcome != 'failure' }}
+        run: |
+          echo "Expected the action to fail on the broken fixture, got '${{ steps.check.outcome }}'"
+          exit 1

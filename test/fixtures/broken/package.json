@@ -1,0 +1,11 @@
+{
+  "name": "@introspection-recipes/broken-fixture",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Deliberately invalid recipe used to test the action's failure path.",
+  "pi": {
+    "agents": [
+      "agents/*.yaml"
+    ]
+  }
+}
