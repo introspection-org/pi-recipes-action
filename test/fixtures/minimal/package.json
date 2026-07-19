@@ -1,0 +1,11 @@
+{
+  "name": "@introspection-recipes/minimal-fixture",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Minimal fixture recipe used to smoke-test pi-recipes-action.",
+  "pi": {
+    "agents": [
+      "agents/*.yaml"
+    ]
+  }
+}

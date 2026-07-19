@@ -1,0 +1,8 @@
+name: agent
+description: Minimal fixture agent for validating the action.
+model:
+  name: anthropic/claude-sonnet-4-6
+  thinking_level: low
+tools: []
+system_instructions:
+  content: You are a fixture agent used only to exercise recipe validation.

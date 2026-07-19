@@ -1,0 +1,60 @@
+name: Pi Recipes Check
+description: Validate a Pi recipe with the pi-recipes checker.
+author: Introspection
+branding:
+  icon: check-circle
+  color: blue
+inputs:
+  recipe-dir:
+    description: Path to the recipe directory to validate.
+    required: false
+    default: "."
+  profile:
+    description: "Validation profile: local, ci, or publish."
+    required: false
+    default: "ci"
+  version:
+    description: "Version of @introspection-ai/pi-recipes to run (latest = always newest)."
+    required: false
+    default: "latest"
+  node-version:
+    description: Node.js version used to run the checker.
+    required: false
+    default: "24"
+  upload-report:
+    description: Upload the JSON diagnostics report as a build artifact.
+    required: false
+    default: "true"
+runs:
+  using: composite
+  steps:
+    - uses: actions/setup-node@v4
+      with:
+        node-version: ${{ inputs.node-version }}
+
+    - name: Validate recipe
+      shell: bash
+      run: |
+        echo "Using @introspection-ai/pi-recipes@$(npm view @introspection-ai/pi-recipes@${{ inputs.version }} version)"
+        npx -y -p @introspection-ai/pi-recipes@${{ inputs.version }} recipes check "${{ inputs.recipe-dir }}" --profile "${{ inputs.profile }}"
+
+    - name: Compute report artifact name
+      if: ${{ always() && inputs.upload-report == 'true' }}
+      id: report
+      shell: bash
+      run: |
+        slug=$(printf '%s' "${{ inputs.recipe-dir }}" | tr '/.' '--' | sed 's/^-*//; s/-*$//')
+        echo "name=recipe-check-report${slug:+-$slug}" >> "$GITHUB_OUTPUT"
+
+    - name: Write structured report
+      if: ${{ always() && inputs.upload-report == 'true' }}
+      shell: bash
+      run: npx -y -p @introspection-ai/pi-recipes@${{ inputs.version }} recipes check "${{ inputs.recipe-dir }}" --profile "${{ inputs.profile }}" --json > recipe-check-report.json || true
+
+    - name: Upload recipe check report
+      if: ${{ always() && inputs.upload-report == 'true' }}
+      uses: actions/upload-artifact@v4
+      with:
+        name: ${{ steps.report.outputs.name }}
+        path: recipe-check-report.json
+        if-no-files-found: ignore
