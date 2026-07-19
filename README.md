@@ -1,7 +1,26 @@
-# pi-recipes-action
+<div align="center">
+  <a href="https://pi.recipes">
+    <picture>
+      <source media="(prefers-color-scheme: dark)" srcset=".github/images/logo-dark.svg">
+      <source media="(prefers-color-scheme: light)" srcset=".github/images/logo-light.svg">
+      <img alt="Pi Recipes" src=".github/images/logo-light.svg" width="165">
+    </picture>
+  </a>
+</div>
 
-Validate a [Pi recipe](https://pi.recipes) in CI with the official
-`recipes check` validator — a thin, drop-in GitHub Action wrapping
+<h4 align="center">Validate Pi recipes in CI</h4>
+
+<div align="center">
+  <a href="https://pi.recipes"><img src="https://img.shields.io/badge/website-pi.recipes-blue" alt="Website"></a>
+  <a href="https://github.com/introspection-org/pi-recipes-action/actions/workflows/test.yml"><img src="https://github.com/introspection-org/pi-recipes-action/actions/workflows/test.yml/badge.svg" alt="CI"></a>
+  <a href="https://github.com/introspection-org/pi-recipes"><img src="https://img.shields.io/badge/checker-pi--recipes-blue" alt="pi-recipes"></a>
+  <a href="https://www.apache.org/licenses/LICENSE-2.0"><img src="https://img.shields.io/badge/license-Apache%202.0-green" alt="License"></a>
+</div>
+
+<br>
+
+A drop-in GitHub Action that validates a [Pi recipe](https://pi.recipes) in CI
+with the official `recipes check` validator, wrapping
 [`@introspection-ai/pi-recipes`](https://www.npmjs.com/package/@introspection-ai/pi-recipes).
 
 By default it validates against the **latest published** checker on every run, so
@@ -103,7 +122,8 @@ jobs:
 When `upload-report` is `true`, the action writes the machine-readable report
 (`recipes check … --json`) to `recipe-check-report.json` and uploads it as the
 `recipe-check-report` artifact — available on both passing and failing runs for
-inspection or downstream tooling.
+inspection or downstream tooling. When validating several recipes in a matrix,
+the artifact name is suffixed with the recipe path so runs don't collide.
 
 ## Versioning
 
@@ -138,4 +158,4 @@ the check non-optional for every contributor.
 
 ## License
 
-Apache-2.0
+Apache-2.0 © Introspection AI Inc. See [LICENSE](LICENSE).
